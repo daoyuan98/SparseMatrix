@@ -191,11 +191,9 @@ vector<double> sparseMatrix<T>::Gauss_Seidel_Iter(vector<double> B) {
 				sigma2 += at(i, j)*prev_result[j];
 			}
 			result[i] = (bi - sigma1 - sigma2) / at(i, i);
-			cout << result[i] << endl;
 		}
 	} while(!converged(result, prev_result) && iterTimes <= MaxIter);
 
-	
 	cout << iterTimes << endl;
 
 	return result;

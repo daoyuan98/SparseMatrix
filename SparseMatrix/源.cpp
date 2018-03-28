@@ -17,21 +17,31 @@ void printVector(vector<T> t) {
 }
 
 int main(void) {
-	sparseMatrix<double> mat(10, 10);
+	sparseMatrix<double> mat(4, 4);
 	vector<int> col;
 	vector<int> row;
 	vector<double> value;
-	for (int i = 0; i < 10; i++) {
-		col.push_back(i);
-		row.push_back(i);
-		value.push_back(i+1);
-	}
+	mat.insert(10, 0, 0);
+	mat.insert(-1, 0, 1);
+	mat.insert(2, 0, 2);
+	mat.insert(-1, 1, 0);
+	mat.insert(11, 1, 1);
+	mat.insert(-1, 1, 2);
+	mat.insert(3,  1, 3);
+	mat.insert(2, 2, 0);
+	mat.insert(-1, 2, 1);
+	mat.insert(10, 2, 2);
+	mat.insert(-1, 2, 3);
+	mat.insert(3, 3, 1);
+	mat.insert(-1, 3, 2);
+	mat.insert(8, 3, 3);
+
 	mat.initializeFromVector(row, col, value);
-	for (int i = 0; i < 10; i++)
-		cout << mat.at(i, i) << endl;
 
+	vector<double> B(4);
 
-	vector<double> B(10, 1.0);
+	B[0] = 6; B[1] = 25; B[2] = -11; B[3] = 15;
+
 	vector<double> res = mat.Gauss_Seidel_Iter(B);
 	printVector<double>(res);
 	pause();
