@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SparseMatrix", "SparseMatrix\SparseMatrix.vcxproj", "{76973048-F8BF-4548-9AB2-0D6D150D4163}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{76973048-F8BF-4548-9AB2-0D6D150D4163}.Debug|x64.ActiveCfg = Debug|x64
+		{76973048-F8BF-4548-9AB2-0D6D150D4163}.Debug|x64.Build.0 = Debug|x64
+		{76973048-F8BF-4548-9AB2-0D6D150D4163}.Debug|x86.ActiveCfg = Debug|Win32
+		{76973048-F8BF-4548-9AB2-0D6D150D4163}.Debug|x86.Build.0 = Debug|Win32
+		{76973048-F8BF-4548-9AB2-0D6D150D4163}.Release|x64.ActiveCfg = Release|x64
+		{76973048-F8BF-4548-9AB2-0D6D150D4163}.Release|x64.Build.0 = Release|x64
+		{76973048-F8BF-4548-9AB2-0D6D150D4163}.Release|x86.ActiveCfg = Release|Win32
+		{76973048-F8BF-4548-9AB2-0D6D150D4163}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {173B6136-9DC6-409C-B802-DEA7D04837A3}
+	EndGlobalSection
+EndGlobal
