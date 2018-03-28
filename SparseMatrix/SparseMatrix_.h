@@ -148,6 +148,7 @@ template<class T> T sparseMatrix<T>::at(int row, int col) {
 				return t;
 			}
 		}
+
 		return 0;
 	}
 	catch (exception e) {
