@@ -8,18 +8,21 @@ void pause() {
 }
 
 int main(void) {
-	sparseMatrix<int> mat(2, 2);
-	mat.insert(1, 0, 0);
-	mat.insert(2, 0, 1);
-	mat.insert(3, 1, 0);
-	mat.insert(4, 1, 1);
-	mat.insert(22, 0, 1);
+	sparseMatrix<int> mat(20, 20);
+	vector<int> col;
+	vector<int> row;
+	vector<int> value;
+	for (int i = 0; i < 20; i++) {
+		col.push_back(i);
+		row.push_back(i);
+		value.push_back(i);
+	}
+	mat.initializeFromVector(row, col, value);
 
-	//mat.printValCols();
-	cout << mat.at(0, 0) << endl;
-	cout << mat.at(0, 1) << endl;
-	cout << mat.at(1, 0) << endl;
-	cout << mat.at(1, 1) << endl;
+	for (int i = 19; i >= 0; i--) {
+		cout << mat.at(i, i) << endl;
+	}
+
 	pause();
 	return 0;
 }

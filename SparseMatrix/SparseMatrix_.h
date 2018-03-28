@@ -165,7 +165,7 @@ T sparseMatrix<T>::at(int row, int col) {
 template<class T>
 bool sparseMatrix<T>::initializeFromVector(vector<int> rows,
 	vector<int> cols, vector<T> vals) {
-	_ASSERT(rows.size() == cols.size() && col.size() == vals.size());
+	_ASSERT(rows.size() == cols.size() && cols.size() == vals.size());
 	int n_success = 0;
 	int n_error = 0;
 	for (unsigned int i = 0; i < rows.size(); i++) {
