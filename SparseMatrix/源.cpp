@@ -14,6 +14,7 @@ int main(void) {
 	mat.insert(3, 1, 0);
 	mat.insert(4, 1, 1);
 	mat.insert(22, 0, 1);
+
 	//mat.printValCols();
 	cout << mat.at(0, 0) << endl;
 	cout << mat.at(0, 1) << endl;
