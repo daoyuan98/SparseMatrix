@@ -52,7 +52,11 @@ public:
 	bool initializeFromVector(vector<int> rows,
 		vector<int> cols, vector<T> vals);
 
-	void updateRow(int row);
+	void updateRow(int row) {
+		for (int i = row + 1; i < Nrow; i++) {
+			row_list[i]++;
+		}
+	}
 
 	void printValCols() {
 		for (int i = 0; i < val_cols_list.size(); i++) {
@@ -73,7 +77,7 @@ sparseMatrix<T>::sparseMatrix()
 template<class T>
 sparseMatrix<T>::sparseMatrix(int nrow, int ncol)
 {
-	row_list = new int[nrow+1];
+	row_list = new int[nrow + 1];
 	for (int i = 0; i <= nrow; i++)
 		row_list[i] = 0;
 	Nrow = nrow;
@@ -92,13 +96,6 @@ int sparseMatrix<T>::cols() {
 	return Ncol;
 }
 
-template<class T>
-void sparseMatrix<T>::updateRow(int row) {
-	for (int i = row + 1; i < Nrow; i++) {
-		row_list[i]++;
-	}
-}
-
 
 template<class T>
 bool sparseMatrix<T>::insert(const T& val, int row, int col) {
@@ -106,15 +103,13 @@ bool sparseMatrix<T>::insert(const T& val, int row, int col) {
 		int row_idx = row_list[row];
 		int next_row_idx = row_list[row + 1];
 		int i;
-		vector<val_col>::iterator iter = val_cols_list.begin()+row_idx;
+		vector<val_col>::iterator iter = val_cols_list.begin() + row_idx;
 		for (i = row_idx; i < next_row_idx && i<val_cols_list.size(); i++, iter++) {
 			if (val_cols_list[i].col >= col)
 				break;
 		}
 
-		
-
-		if (i==val_cols_list.size()) { // should push_back
+		if (i == val_cols_list.size()) { // should push_back
 			val_col t(val, col);
 			val_cols_list.push_back(t);
 			//printf("val: %d  push back\n",val);
@@ -122,14 +117,14 @@ bool sparseMatrix<T>::insert(const T& val, int row, int col) {
 			updateRow(row);
 			return true;
 		}
-		else if(col == val_cols_list[i].col){//already exist
+		else if (col == val_cols_list[i].col) {//already exist
 			val_cols_list[i].val = val;
 			//printf("val: %d already exit\n",val);
 			return true;
 		}
 		else {// common insertion
 			val_col t(val, col);
-			val_cols_list.insert(++iter,t);
+			val_cols_list.insert(++iter, t);
 			row_list[Nrow]++;
 			//printf("val: %d  insertion\n",val);
 			updateRow(row);
@@ -143,8 +138,7 @@ bool sparseMatrix<T>::insert(const T& val, int row, int col) {
 
 }
 
-template<class T>
-T sparseMatrix<T>::at(int row, int col) {
+template<class T> T sparseMatrix<T>::at(int row, int col) {
 	try {
 		int row_idx = row_list[row];
 		int next_row_idx = row_list[row + 1];
@@ -154,11 +148,11 @@ T sparseMatrix<T>::at(int row, int col) {
 				return t;
 			}
 		}
-		return NULL;
+		return 0;
 	}
 	catch (exception e) {
 		std::cout << "invalid access" << std::endl;
-		return NULL;
+		return 0;
 	}
 }
 
