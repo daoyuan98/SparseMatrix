@@ -10,8 +10,12 @@ void pause() {
 template <class T>
 void printVector(vector<T> t) {
 	cout << "[";
+	if (t.size() == 0) { 
+		cout << " ]" << endl;
+		return;
+	}
 	for (int i = 0; i < t.size()-1; i++) {
-		cout << t[i] << "  ,";
+		cout << t[i] << ", ";
 	}
 	cout << *(--t.end()) << "]" << endl;
 }
@@ -50,8 +54,19 @@ int main(void) {
 	mat.insert(4, 3, 3);
 	B[0] = 1; B[1] = 2; B[2] = 3; B[3] = 4;
 
-	vector<double> res = mat.Gauss_Seidel_Iter(B);
-	res = mat.ConGrad(B);
+	sparseMatrix<double> mat2(4, 4);
+	mat2 = mat;
+	cout << "mat2: 3,3  ";
+	cout << mat2.at(3, 3) << endl;
+	mat2.insert(3, 3, 3);
+	cout << "mat2: 3,3  ";
+	cout << mat2.at(3, 3) << endl;
+
+	cout << "mat: 3,3  ";
+	cout << mat.at(3, 3) << endl;
+
+	//vector<double> res = mat.Gauss_Seidel_Iter(B);
+	vector<double> res = mat.ConGrad(B);
 	printVector<double>(res);
 	pause();
 	return 0;

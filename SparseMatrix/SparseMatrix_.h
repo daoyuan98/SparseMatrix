@@ -5,10 +5,10 @@
 #include <iostream>
 using namespace std;
 
-#define ConvergeLimit 0.001
-#define MaxIter 1000
+#define ConvergeLimit 1
+#define MaxIter 10
 
-double ZERO = 0;
+int ZERO = 0;
 
 template <class T> class sparseMatrix
 {
@@ -42,12 +42,13 @@ template <class T> class sparseMatrix
 	};
 
 private:
-	vector<val_col> val_cols_list;
-	int* row_list;
+	
 	int Nrow;
 	int Ncol;
 	int Nele;
 public:
+	int* row_list;
+	vector<val_col> val_cols_list;
 	sparseMatrix();
 	sparseMatrix(int nrow, int ncol);
 	sparseMatrix(vector<T> v);
@@ -75,6 +76,7 @@ public:
 		for (int i = row + 1; i < Nrow; i++) {
 			row_list[i]++;
 		}
+		row_list[Nrow] = 0x7fffffff;
 	}
 
 	void printValCols() {
@@ -104,17 +106,22 @@ public:
 
 template<class T>
 sparseMatrix<T> sparseMatrix<T>::operator=(sparseMatrix<T> m) {
-	clear();
 	Nrow = m.rows();
 	Ncol = m.cols();
 	row_list = new int[Nrow + 1];
-	val_cols_list.push_back(val_col(0, 0));
-	for (int i = 0; i < Nrow; i++) {
-		for (int j = 0; j < Ncol; j++) {
-			if(at(i,j))
-				insert(m.at(i, j), i, j);
-		}
+	for (int i = 0; i < Nrow; i++)
+		row_list[i] = m.row_list[i];
+	int n = val_cols_list.size();
+	val_cols_list.clear();
+	n = m.val_cols_list.size();
+	for (int i = 0; i < n; i++) {
+		val_cols_list.push_back(m.val_cols_list[i]);
 	}
+	/*for (int i = 0; i < Nrow; i++) {
+		for (int j = 0; j < Ncol; j++) {
+				this->insert(m.at(i, j), i, j);
+		}
+	}*/
 	return *this;
 }
 
@@ -124,14 +131,15 @@ sparseMatrix<T> sparseMatrix<T>::dot(sparseMatrix<T> mat) {
 	_ASSERT(Ncol = mat.rows());
 	int row = Nrow;
 	int col = mat.cols();
-	cout << Nrow << Ncol << endl;
-	cout << mat.rows() << mat.cols() << endl;
+	/*cout << Nrow << Ncol << endl;
+	cout << mat.rows() << mat.cols() << endl;*/
 	sparseMatrix<T> r_m(row,col);
 	for (int i = 0; i < row; i++) {
 		for (int j = 0; j < col; j++) {
 			double res = 0;
 			for (int k = 0; k < Ncol; k++) {
-				res += at(i, k)*at(k, j);
+				if(at(i,k)&&mat.at(k,j))
+					res += at(i, k)*mat.at(k, j);
 			}
 			r_m.insert(res, i, j);
 		}
@@ -197,12 +205,12 @@ sparseMatrix<T> sparseMatrix<T>::Transpose() {
 //æÿ’Ûºı∑®
 template<class T>
 sparseMatrix<T> sparseMatrix<T>::operator-(sparseMatrix<T> m) {
-	printf("%d %d\n%d %d\n", Ncol, Nrow, m.cols(), m.rows());
+	//printf("%d %d\n%d %d\n", Ncol, Nrow, m.cols(), m.rows());
 	_ASSERT_EXPR(Ncol == m.cols() && Nrow == m.rows(),
 		"");
 	sparseMatrix<T> res(m.rows(), m.cols());
 	for (int i = 0; i < m.rows(); i++) {
-		for (int j = 0; j < m.rows(); j++) {
+		for (int j = 0; j < m.cols(); j++) {
 			res.insert(this->at(i, j) - m.at(i, j), i, j);
 		}
 	}
@@ -213,24 +221,34 @@ template<class T>
 sparseMatrix<T> sparseMatrix<T>::operator*(double d) {
 	for (int i = 0; i < Nrow; i++) {
 		for (int j = 0; j < Ncol; j++) {
-			if (!at(i, j))
+			if (at(i, j))
 				insert(d*at(i, j), i, j);
 		}
 	}
 	return *this;
 }
 
+sparseMatrix<double> res(4,1);
 //æÿ’Ûº”∑®
 template<class T>
 sparseMatrix<T> sparseMatrix<T>::operator+(sparseMatrix<T> m) {
 	_ASSERT(this->Ncol == m.cols() && this->Nrow == m.rows());
-	sparseMatrix<T> res(m.rows(), m.cols());
+	res.clear();
 	for (int i = 0; i < m.rows(); i++) {
-		for (int j = 0; j < m.rows(); j++) {
-			res.insert(this->at(i, j)+ m.at(i, j), i, j);
+		for (int j = 0; j < m.cols(); j++) {
+			T v1 = at(i, j);
+			T v2 = m.at(i, j);
+			//cout << v1 << " " << v2 << endl;
+			T r = v1 + v2;
+			if (r) {
+				//cout << "insert val: " << r << endl;
+				this->insert(r, i, j);
+			}
 		}
 	}
-	return res;
+	//printf("ans vec:\n");
+	//printVector(this->toVec());
+	return *this;
 }
 
 template<class T>
@@ -280,10 +298,7 @@ bool sparseMatrix<T>::isPosDefinite(void) {
 template<class T>
 sparseMatrix<T>::sparseMatrix()
 {
-	row_list = new int[10];
-	Nrow = 100;
-	Ncol = 0;
-	Nele = 0;
+	sparseMatrix(10, 10);
 }
 
 template<class T>
@@ -292,6 +307,7 @@ sparseMatrix<T>::sparseMatrix(int nrow, int ncol)
 	row_list = new int[nrow + 1];
 	for (int i = 0; i <= nrow; i++)
 		row_list[i] = 0;
+	val_cols_list.clear();
 	Nrow = nrow;
 	Ncol = ncol;
 	Nele = 0;
@@ -302,8 +318,12 @@ template<class T>
 sparseMatrix<T>::sparseMatrix(vector<T> v) {
 	row_list = new int[2];
 	row_list[0] = row_list[1] = 0;
+	//val_cols_list.push_back(val_col(0, 0));
 	Nrow = 1;
 	Ncol = v.size();
+	for (int i = 0; i < v.size(); i++)
+		if (v[i])
+			insert(v[i], 0, i);
 }
 
 template<class T>
@@ -317,9 +337,11 @@ bool sparseMatrix<T>::insert(const T& val, int row, int col) {
 	try {
 		int row_idx = row_list[row];
 		int next_row_idx = row_list[row + 1];
-		int i;
-		vector<val_col>::iterator iter = val_cols_list.begin() + row_idx;
-		for (i = row_idx; i < next_row_idx && i<val_cols_list.size(); i++, iter++) {
+		int i = 0;
+		//vector<val_col>::iterator iter = val_cols_list.begin() + row_idx;
+		vector<val_col>::iterator iter = val_cols_list.begin();
+		
+		for (i = row_idx; i < next_row_idx && i<val_cols_list.size()&&iter!=val_cols_list.end(); i++, iter++) {
 			if (val_cols_list[i].col >= col)
 				break;
 		}
@@ -339,6 +361,7 @@ bool sparseMatrix<T>::insert(const T& val, int row, int col) {
 		}
 		else {// common insertion
 			val_col t(val, col);
+			iter = iter + row_idx;
 			val_cols_list.insert(++iter, t);
 			row_list[Nrow]++;
 			//printf("val: %d  insertion\n",val);
@@ -379,26 +402,47 @@ static bool converged(vector<T> v) {
 
 template<class T>
 vector<double> sparseMatrix<T>::ConGrad(vector<double> B) {
-	if (!this->isSymmetric())
-		return vector<double>();
+	/*if (!this->isSymmetric())
+		return vector<double>();*/
 	
 	//real calculation
 	sparseMatrix b(B);
 	sparseMatrix<double> x(Nrow, 1);
+	for (int i = 0; i < Nrow; i++) {
+		x.insert(0, i, 0);
+	}
 	sparseMatrix<double> r(1, B.size());
 	sparseMatrix<double> p(1, B.size());
 	sparseMatrix<double> new_r(1, B.size());
 	r = b - dot(x).Transpose();
 	p = b - dot(x).Transpose();
+	int niter = 0;
 	do {
-		double rkTrk = (r.dot(r.Transpose()).at(0, 0));
-		double alpha =  rkTrk / (p.Transpose().dot(*this).dot(p)).at(0,0);
-		x = x + p*alpha;
-		new_r = r - (dot(p))*alpha;
+		niter++;
+		double rkTrk = (r.dot(r.Transpose()).at(0, 0));	
+		//cout << "rkTrk£∫ "<<rkTrk << endl;
+		double div = (p.Transpose().dot(*this).dot(p)).at(0, 0);
+		double alpha;
+		if(div==0)	alpha =  1 ;
+		else alpha = rkTrk / div;
+		//cout << alpha << endl;
+		printVector(x.toVec());
+		sparseMatrix<double> inter(Nrow, 1);
+		inter = p.Transpose()*alpha;
+		/*cout << "inter" << endl;
+		printVector(inter.toVec());*/
+		x = x + inter;
+		//cout << "x" << endl;
+		//printVector(x.toVec());
+
+		//cout << "x" << endl;
+		new_r = r - (dot(p.Transpose())).Transpose()*alpha;
+		printVector(new_r.toVec());
+		//cout << "after new r" << endl;
 		double beta = new_r.dot(new_r.Transpose()).at(0, 0) / rkTrk;
 		p = new_r + p*beta;
 		r = new_r;
-	} while (!converged<T>(r.toVec()));
+	} while (!converged<T>(r.toVec())&&niter<=MaxIter);
 	return x.toVec();
 }
 
@@ -445,12 +489,17 @@ T sparseMatrix<T>::at(int row, int col) {
 	try {
 		int row_idx = row_list[row];
 		int next_row_idx = row_list[row + 1];
+		if (row == Nrow - 1) next_row_idx = val_cols_list.size();
+		if (row_idx < 0) return ZERO;
 		for (int i = row_idx; i < next_row_idx; i++) {
 			if (val_cols_list[i].col == col) {
 				T t = (val_cols_list[i].get());
+				if (t < 0) t = -t;
+				//cout <<"at: "<< t << endl;
 				return t;
 			}
 		}
+		//cout << "at: " << ZERO << endl;
 		return ZERO;
 	}
 	catch (exception e) {
