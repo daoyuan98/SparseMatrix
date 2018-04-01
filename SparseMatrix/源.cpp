@@ -48,22 +48,36 @@ int main(void) {
 	vector<double> B(4);
 
 	//B[0] = 6; B[1] = 25; B[2] = -11; B[3] = 15;
-	mat.insert(1, 0, 0);
-	mat.insert(2, 1, 1);
-	mat.insert(3, 2, 2);
-	mat.insert(4, 3, 3);
-	B[0] = 1; B[1] = 2; B[2] = 3; B[3] = 4;
+	mat.insert(1, 0, 1);
+	mat.insert(1, 0, 3);
+	mat.insert(1, 1, 0);
+	mat.insert(1, 1, 2);
+	mat.insert(1, 2, 1);
+	mat.insert(1, 3, 0);
+	B[0] = 2; B[1] = 2; B[2] = 1; B[3] = 1;
+
+
+	/*sparseMatrix<int> t(2, 2);
+	t.insert(1, 0, 0);
+	t.insert(2, 0, 1);
+	t.insert(3, 1, 0);
+	t.insert(4, 1, 1);
+	sparseMatrix<int> r(2, 1);
+	t.insert(1, 0, 0);
+	t.insert(2, 0, 1);
+	cout << "!!!" << endl;
+	cout << t.dot(r).at(0, 1) << endl;;*/
 
 	sparseMatrix<double> mat2(4, 4);
 	mat2 = mat;
-	cout << "mat2: 3,3  ";
+	/*cout << "mat2: 3,3  ";
 	cout << mat2.at(3, 3) << endl;
 	mat2.insert(3, 3, 3);
 	cout << "mat2: 3,3  ";
 	cout << mat2.at(3, 3) << endl;
 
 	cout << "mat: 3,3  ";
-	cout << mat.at(3, 3) << endl;
+	cout << mat.at(3, 3) << endl;*/
 
 	//vector<double> res = mat.Gauss_Seidel_Iter(B);
 	vector<double> res = mat.ConGrad(B);

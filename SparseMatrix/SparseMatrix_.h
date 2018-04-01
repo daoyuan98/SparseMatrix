@@ -5,8 +5,8 @@
 #include <iostream>
 using namespace std;
 
-#define ConvergeLimit 1
-#define MaxIter 10
+#define ConvergeLimit 10
+#define MaxIter 100
 
 int ZERO = 0;
 
@@ -415,7 +415,7 @@ vector<double> sparseMatrix<T>::ConGrad(vector<double> B) {
 	sparseMatrix<double> p(1, B.size());
 	sparseMatrix<double> new_r(1, B.size());
 	r = b - dot(x).Transpose();
-	p = b - dot(x).Transpose();
+	p = r;
 	int niter = 0;
 	do {
 		niter++;
@@ -426,20 +426,19 @@ vector<double> sparseMatrix<T>::ConGrad(vector<double> B) {
 		if(div==0)	alpha =  1 ;
 		else alpha = rkTrk / div;
 		//cout << alpha << endl;
-		printVector(x.toVec());
-		sparseMatrix<double> inter(Nrow, 1);
-		inter = p.Transpose()*alpha;
+		//printVector(x.toVec());
 		/*cout << "inter" << endl;
 		printVector(inter.toVec());*/
-		x = x + inter;
+		x = x + p.Transpose()*alpha;
 		//cout << "x" << endl;
 		//printVector(x.toVec());
 
 		//cout << "x" << endl;
 		new_r = r - (dot(p.Transpose())).Transpose()*alpha;
-		printVector(new_r.toVec());
+		//printVector(new_r.toVec());
 		//cout << "after new r" << endl;
 		double beta = new_r.dot(new_r.Transpose()).at(0, 0) / rkTrk;
+		//cout << beta << endl;
 		p = new_r + p*beta;
 		r = new_r;
 	} while (!converged<T>(r.toVec())&&niter<=MaxIter);
